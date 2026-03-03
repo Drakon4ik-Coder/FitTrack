@@ -1,13 +1,50 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@layer base {
+  body {
+    background-color: #0a0e27;
+    color: #ffffff;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@layer components {
+  .card {
+    @apply bg-gradient-to-br from-surface-start to-surface-end border border-white/10 rounded-2xl shadow-card;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-accent-red to-pink-500 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-glow-red cursor-pointer border-0;
+  }
+
+  .btn-green {
+    @apply bg-gradient-to-r from-accent-green to-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 hover:scale-105 hover:shadow-glow-green cursor-pointer border-0;
+  }
+
+  .btn-ghost-red {
+    @apply bg-transparent text-accent-red font-semibold px-6 py-3 rounded-xl border-2 border-accent-red transition-all duration-200 hover:bg-accent-red hover:text-white cursor-pointer;
+  }
+
+  .input-dark {
+    @apply bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-text-muted w-full focus:outline-none focus:ring-2 focus:ring-accent-red/50 focus:border-accent-red transition-all duration-200;
+  }
+
+  .label-text {
+    @apply text-text-muted text-sm font-medium mb-1 block;
+  }
+
+  .pill {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+  }
 }
