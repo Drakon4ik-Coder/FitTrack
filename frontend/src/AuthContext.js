@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { setCookie, getCookie, deleteCookie } from './utils/cookies';
+import API_BASE from './utils/api';
 
 const AuthContext = createContext(null);
 
@@ -11,7 +12,7 @@ export const AuthProvider = ({ children }) => {
 
   const verifyToken = async (tokenToVerify) => {
     try {
-      const response = await fetch('https://Drakon4ik.pythonanywhere.com/api/token/verify/', {
+      const response = await fetch(`${API_BASE}/api/token/verify/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: tokenToVerify }),
@@ -27,7 +28,7 @@ export const AuthProvider = ({ children }) => {
     if (!refreshToken) return false;
 
     try {
-      const response = await fetch('https://Drakon4ik.pythonanywhere.com/api/token/refresh/', {
+      const response = await fetch(`${API_BASE}/api/token/refresh/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refresh: refreshToken }),
