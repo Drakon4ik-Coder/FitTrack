@@ -19,12 +19,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-t%zm$t@uzi&-l1an%r$zn15rbye_xd7_jin81zam4*p@1p-1$j'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-t%zm$t@uzi&-l1an%r$zn15rbye_xd7_jin81zam4*p@1p-1$j')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['Drakon4ik.pythonanywhere.com']
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'Drakon4ik.pythonanywhere.com').split(',')
 
 # Application definition
 
@@ -67,9 +66,8 @@ MIDDLEWARE = [
 	'corsheaders.middleware.CorsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React frontend
-]
+_cors = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000')
+CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors.split(',')]
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
@@ -107,7 +105,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': BASE_DIR / 'db.sqlite3',
+		'NAME': BASE_DIR / 'data' / 'db.sqlite3',
 	}
 }
 
