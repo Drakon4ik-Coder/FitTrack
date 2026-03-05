@@ -108,7 +108,7 @@ class AvailableIngredientsView(APIView):
         if action:
             available_ingredients = action.get_available_ingredients()
             return Response(available_ingredients, status=status.HTTP_200_OK)
-        return Response({}, status=status.HTTP_404_NOT_FOUND)
+        return Response({}, status=status.HTTP_200_OK)
 
 class EatenFoodView(APIView):
     permission_classes = [IsAuthenticated]
@@ -119,7 +119,7 @@ class EatenFoodView(APIView):
         if action:
             eaten_food = action.get_eaten_food()
             return Response(eaten_food, status=status.HTTP_200_OK)
-        return Response({}, status=status.HTTP_404_NOT_FOUND)
+        return Response([], status=status.HTTP_200_OK)
 
 class MealRecommendationsView(APIView):
     permission_classes = [IsAuthenticated]
