@@ -2,6 +2,8 @@
 
 A full-stack web application for tracking daily calorie and macro intake, managing a food pantry, and planning meals from custom recipes.
 
+**Live demo:** https://fittrack.drakon4ik.uk
+
 ![Demo](images/demo.gif)
 
 ---
