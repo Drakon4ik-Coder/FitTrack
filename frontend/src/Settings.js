@@ -1,77 +1,49 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from './AuthContext';
+import API_BASE from './utils/api';
 import { useNavigate } from 'react-router-dom';
+
+const goalCards = [
+  { key: 'goal_calories', label: 'Daily Calories', unit: 'kcal', color: '#4CAF50', bg: 'bg-accent-green/10', border: 'border-accent-green/20', icon: '🔥' },
+  { key: 'goal_protein', label: 'Daily Protein', unit: 'g', color: '#FF6B6B', bg: 'bg-accent-red/10', border: 'border-accent-red/20', icon: '🥩' },
+  { key: 'goal_carbs', label: 'Daily Carbs', unit: 'g', color: '#4ECDC4', bg: 'bg-accent-teal/10', border: 'border-accent-teal/20', icon: '🌾' },
+  { key: 'goal_fats', label: 'Daily Fats', unit: 'g', color: '#FFD93D', bg: 'bg-accent-yellow/10', border: 'border-accent-yellow/20', icon: '🥑' },
+];
 
 function Settings() {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [goals, setGoals] = useState({
-    goal_calories: 2000,
-    goal_protein: 150,
-    goal_carbs: 250,
-    goal_fats: 45
-  });
-  // Add new state for temporary values
+  const [saved, setSaved] = useState(false);
   const [tempGoals, setTempGoals] = useState({
-    goal_calories: 2000,
-    goal_protein: 150,
-    goal_carbs: 250,
-    goal_fats: 45
+    goal_calories: 2000, goal_protein: 150, goal_carbs: 250, goal_fats: 45
   });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) return;
-
-    fetch('https://Drakon4ik.pythonanywhere.com/user-settings/', {
+    fetch(`${API_BASE}/user-settings/`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-      .then(response => {
-        if (!response.ok) throw new Error('Failed to fetch settings');
-        return response.json();
-      })
-      .then(settings => {
-        setGoals(settings);
-        setTempGoals(settings); // Also set temporary goals
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching settings:', error);
-        setLoading(false);
-      });
+      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+      .then(settings => { setTempGoals(settings); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   const handleUpdateGoals = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('https://Drakon4ik.pythonanywhere.com/user-settings/', {
+      const response = await fetch(`${API_BASE}/user-settings/`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(tempGoals)
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to update settings');
-      }
-
-      const updatedSettings = await response.json();
-      setGoals(updatedSettings);
-      alert('Goals updated successfully!');
-    } catch (error) {
-      console.error('Error updating settings:', error);
+      if (!response.ok) throw new Error();
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch {
       alert('Failed to update goals');
     }
-  };
-
-  const handleInputChange = (value, type) => {
-    setTempGoals(prev => ({
-      ...prev,
-      [type]: parseInt(value, 10)
-    }));
   };
 
   const handleLogout = () => {
@@ -80,108 +52,46 @@ function Settings() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-12 h-12 border-4 border-accent-teal border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
-      <h1>Nutrition Goals</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
-        <div className="setting-item">
-          <label>
-            Daily Calorie Goal:
-            <input
-              type="number"
-              value={tempGoals.goal_calories}
-              onChange={(e) => handleInputChange(e.target.value, 'goal_calories')}
-              style={{
-                marginLeft: "10px",
-                padding: "5px",
-                width: "100px",
-              }}
-            />
-            kcal
-          </label>
-        </div>
+    <div className="max-w-2xl mx-auto space-y-6">
+      <h1 className="text-2xl font-bold text-white">Nutrition Goals</h1>
 
-        <div className="setting-item">
-          <label>
-            Daily Protein Goal:
-            <input
-              type="number"
-              value={tempGoals.goal_protein}
-              onChange={(e) => handleInputChange(e.target.value, 'goal_protein')}
-              style={{
-                marginLeft: "10px",
-                padding: "5px",
-                width: "100px",
-              }}
-            />
-            g
-          </label>
-        </div>
-
-        <div className="setting-item">
-          <label>
-            Daily Carbs Goal:
-            <input
-              type="number"
-              value={tempGoals.goal_carbs}
-              onChange={(e) => handleInputChange(e.target.value, 'goal_carbs')}
-              style={{
-                marginLeft: "10px",
-                padding: "5px",
-                width: "100px",
-              }}
-            />
-            g
-          </label>
-        </div>
-
-        <div className="setting-item">
-          <label>
-            Daily Fats Goal:
-            <input
-              type="number"
-              value={tempGoals.goal_fats}
-              onChange={(e) => handleInputChange(e.target.value, 'goal_fats')}
-              style={{
-                marginLeft: "10px",
-                padding: "5px",
-                width: "100px",
-              }}
-            />
-            g
-          </label>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {goalCards.map(({ key, label, unit, color, bg, border, icon }) => (
+          <div key={key} className={`card p-5 ${bg} border ${border}`}>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-xl">{icon}</span>
+              <span className="text-sm font-semibold text-text-muted">{label}</span>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <input
+                type="number"
+                value={tempGoals[key]}
+                onChange={(e) => setTempGoals(prev => ({ ...prev, [key]: parseInt(e.target.value, 10) }))}
+                className="bg-transparent border-0 border-b-2 text-3xl font-bold focus:outline-none w-full transition-colors duration-200"
+                style={{ color, borderColor: `${color}40` }}
+              />
+              <span className="text-text-muted text-sm font-medium">{unit}</span>
+            </div>
+          </div>
+        ))}
       </div>
-      
-      <div style={{ marginTop: '20px' }}>
+
+      <div className="flex gap-3">
         <button
           onClick={handleUpdateGoals}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            marginRight: '10px'
-          }}
+          className={`btn-green flex-1 transition-all ${saved ? 'bg-gradient-to-r from-emerald-600 to-emerald-700' : ''}`}
         >
-          Update Goals
+          {saved ? '✓ Saved!' : 'Update Goals'}
         </button>
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#dc3545',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
+        <button onClick={handleLogout} className="btn-ghost-red px-6 py-3">
           Logout
         </button>
       </div>
