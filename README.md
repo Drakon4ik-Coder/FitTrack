@@ -2,7 +2,7 @@
 
 A full-stack web application for tracking daily calorie and macro intake, managing a food pantry, and planning meals from custom recipes.
 
-> 🎬 *Demo GIF coming soon*
+![Demo](images/demo.gif)
 
 ---
 
