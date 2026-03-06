@@ -1,13 +1,22 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
-import CalorieTracker from "./CalorieTracker";
-import FoodListManager from "./FoodListManager";
 import { AuthProvider, useAuth } from "./AuthContext";
 import { Login } from "./components/Login";
 import { Register } from "./components/Register";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import Pantry from "./Pantry";
-import Settings from "./Settings";
+
+const CalorieTracker = lazy(() => import("./CalorieTracker"));
+const FoodListManager = lazy(() => import("./FoodListManager"));
+const Pantry = lazy(() => import("./Pantry"));
+const Settings = lazy(() => import("./Settings"));
+
+function PageSpinner() {
+  return (
+    <div className="flex items-center justify-center h-64">
+      <div className="w-12 h-12 border-4 border-accent-teal border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
 
 function NavLink({ to, children }) {
   const location = useLocation();
@@ -68,30 +77,32 @@ function App() {
         <div className="min-h-screen bg-app">
           <Navigation />
           <main className="max-w-6xl mx-auto px-6 py-8">
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <CalorieTracker />
-                </ProtectedRoute>
-              } />
-              <Route path="/food-list" element={
-                <ProtectedRoute>
-                  <FoodListManager />
-                </ProtectedRoute>
-              } />
-              <Route path="/pantry" element={
-                <ProtectedRoute>
-                  <Pantry />
-                </ProtectedRoute>
-              } />
-              <Route path="/settings" element={
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
-              } />
-            </Routes>
+            <Suspense fallback={<PageSpinner />}>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/" element={
+                  <ProtectedRoute>
+                    <CalorieTracker />
+                  </ProtectedRoute>
+                } />
+                <Route path="/food-list" element={
+                  <ProtectedRoute>
+                    <FoodListManager />
+                  </ProtectedRoute>
+                } />
+                <Route path="/pantry" element={
+                  <ProtectedRoute>
+                    <Pantry />
+                  </ProtectedRoute>
+                } />
+                <Route path="/settings" element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                } />
+              </Routes>
+            </Suspense>
           </main>
         </div>
       </Router>
