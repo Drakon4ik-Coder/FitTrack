@@ -99,9 +99,11 @@ function Pantry() {
         }
         setAvailableIngredients(prev => {
           const updated = { ...prev };
+          const cookedTotal = Object.values(adjustedQuantities).reduce((sum, q) => sum + q, 0);
           for (const recipe of recipeIngredients) {
             updated[recipe.ingredient] -= adjustedQuantities[recipe.ingredient];
           }
+          updated[food.item_id] = (updated[food.item_id] || 0) + cookedTotal;
           return updated;
         });
       } catch (error) {
